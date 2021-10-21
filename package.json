@@ -1,0 +1,125 @@
+{
+  "name": "spbu-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_ENV=development node server.js",
+    "build": "NODE_ENV=production next build",
+    "start": "NODE_ENV=production node server.js",
+    "go": "NODE_ENV=production node server.js",
+    "cluster": "NODE_ENV=production node cluster.js",
+    "lint": "next lint",
+    "build:css": "tailwind build -i styles/global.css -o styles/style.css"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "dependencies": {
+    "@adobe/react-spectrum": "^3.14.1",
+    "autoprefixer": "^10.3.4",
+    "formidable": "^1.2.2",
+    "formidable-serverless": "^1.1.1",
+    "imagekit": "^3.2.0",
+    "imagekitio-react": "^1.0.11",
+    "lint-staged": "^11.1.2",
+    "moment": "^2.29.1",
+    "next": "^11.1.0",
+    "next-iron-session": "^4.2.0",
+    "next-transpile-modules": "^8.0.0",
+    "node-cache": "^5.1.2",
+    "pdfkit": "^0.10.0",
+    "qrcode-svg": "^1.1.0",
+    "react": "^17.0.2",
+    "react-dom": "17.0.2",
+    "react-hotkeys": "^2.0.0",
+    "slonik": "^24.1.0",
+    "slonik-interceptor-field-name-transformation": "^1.5.3",
+    "slonik-interceptor-query-cache": "^2.0.1",
+    "slonik-interceptor-query-normalisation": "^1.1.10",
+    "styled-jsx": "^4.0.1",
+    "svg-to-pdfkit": "^0.1.8",
+    "swr": "^1.0.0",
+    "tailwindcss": "^2.2.15",
+    "uuid": "^7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-0",
+    "@next/eslint-plugin-next": "^11.1.2",
+    "@react-spectrum/provider": "^3.2.2",
+    "@react-spectrum/table": "^3.0.0-rc.1",
+    "@tailwindcss/forms": "^0.3.4",
+    "@tailwindcss/jit": "^0.1.10",
+    "@types/formidable": "^1.2.4",
+    "@types/imagekit": "^3.1.2",
+    "@types/node": "^16.7.1",
+    "@types/pdfkit": "^0.11.2",
+    "@types/qrcode-svg": "^1.1.1",
+    "@types/react": "^17.0.27",
+    "@types/react-dom": "^17.0.9",
+    "@types/slonik": "^22.1.5",
+    "@typescript-eslint/eslint-plugin": "^4.31.2",
+    "@typescript-eslint/parser": "^4.31.2",
+    "eslint": "^7.32.0",
+    "eslint-config-next": "^11.1.2",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-react": "^7.26.1",
+    "postcss": "^8.3.6",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-nesting": "^8.0.1",
+    "postcss-preset-env": "^6.7.0",
+    "typescript": "^4.4.3"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "eslint",
+      "prettier --write",
+      "git add"
+    ],
+    "**/*.{md,mdx,json}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "next-unused": {
+    "alias": {
+      "@lib/*": [
+        "lib/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@styles/*": [
+        "styles/*"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ]
+    },
+    "debug": true,
+    "include": [
+      "components",
+      "lib",
+      "pages"
+    ],
+    "exclude": [],
+    "entrypoints": [
+      "pages"
+    ]
+  },
+  "browserslist": [
+    "> 1%",
+    "not edge <= 18",
+    "not safari <= 13",
+    "not ie 11",
+    "not op_mini all"
+  ]
+}

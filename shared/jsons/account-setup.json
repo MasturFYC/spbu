@@ -1,0 +1,30 @@
+[
+    {
+        "id": 2,
+        "code": "ORD",
+        "name": "ORDER",
+        "desc": "Transaksi ORDER",
+        "accId": 0
+    },
+    {
+        "id": 3,
+        "accId": 24,
+        "code": "SPB",
+        "desc": "Akun pendapatan penjualan BBM",
+        "name": "Akun pendapatan"
+    },
+    {
+        "id": 4,
+        "accId": 6,
+        "code": "SPB",
+        "desc": "Akun penerima pembayaran dari penjualan BBM",
+        "name": "Akun pembayaran"
+    },
+    {
+        "id": 5,
+        "accId": 21,
+        "code": "SPB",
+        "desc": "Akun piutang pelanggan",
+        "name": "Akun piutang"
+    }
+]
