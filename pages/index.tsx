@@ -22,7 +22,7 @@ export default function Home() {
       <Flex direction={{ base: 'column', M: 'row' }} gap="size-400" alignItems="center">
         <View
           width={{ base: '100%', M: '50%' }}
-          paddingX={{ base: 'size-100', M: 'size-600' }}
+          paddingX={{ base: 'size-200', M: 'size-600' }}
           marginTop={{ base: '24px', M: 0 }}
         >
           <View>
