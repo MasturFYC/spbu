@@ -1,25 +1,27 @@
-import React, { ReactHTMLElement, Ref, useState } from 'react'
+import { NextPage } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
-import { iUserLogin } from './interfaces'
-import fetchJson from '@lib/fetch-json'
+import React, { useState } from 'react'
 import { NextRouter } from 'next/router'
-import useClickOutside from './useClickOutside'
 import { Flex } from '@react-spectrum/layout'
 import { View } from '@react-spectrum/view'
 import { Item, TabList, Tabs } from '@react-spectrum/tabs'
 import { Divider } from '@react-spectrum/divider'
-import { Image } from '@react-spectrum/image'
 import { ActionButton } from '@react-spectrum/button'
-
 import { Menu } from '@react-spectrum/menu'
 import { MenuTrigger } from '@react-spectrum/menu'
 import useIsMobile from '@lib/useIsMobile'
+import useClickOutside from './useClickOutside'
+import { iUserLogin } from './interfaces'
+import fetchJson from '@lib/fetch-json'
+import myLoader from '@lib/image-loader'
 
 export type menuType = {
   selectedMenu: string
   user?: iUserLogin
   onSelectionChange?: (e: React.Key) => void
 }
+
 const companyName = 'PT. BUANA MIGAS PRATAMA'
 
 interface iTab {
@@ -79,37 +81,41 @@ const tabs: iTab[] = [
   },
 ]
 
-export default function TabMainMenu({
-  home,
-  user,
-  mutateUser,
-  router,
-  activeMenu = 'SPBU',
-}: {
+type TabMainMenuProps = {
   activeMenu: string | undefined
   home?: boolean
   user?: iUserLogin
   mutateUser?: (data?: any, shouldRevalidate?: boolean | undefined) => Promise<any>
   router: NextRouter
-}) {
-  const [hideMenu, setHideMenu] = React.useState(true)
+}
+
+const TabMainMenu: NextPage<TabMainMenuProps> = ({
+  home,
+  user,
+  mutateUser,
+  router,
+  activeMenu = 'SPBU',
+}) => {
+//  const [hideMenu, setHideMenu] = React.useState(true)
   const [hideMenuUser, setHideMenuUser] = React.useState(true)
-  // const userRef = React.useRef<HTMLElement>(null)
+  const menuRef = React.createRef<HTMLDivElement>()
   // const mainRef = React.useRef<HTMLButtonElement>(null)
   const [tab, setTab] = useState<string | undefined>(activeMenu)
 
   const isMobile = useIsMobile()
 
-  const showMenu = () => {
-    setHideMenu(!hideMenu)
+  // const showMenu = () => {
+  //   setHideMenu(!hideMenu)
+  // }
+
+  const showMenuUser = (show: boolean) => {
+    setHideMenuUser(show)
   }
 
-  const showMenuUser = () => setHideMenuUser(!hideMenuUser)
-
-  // useClickOutside(userRef, () => {
-  //   if (hideMenuUser) return null
-  //   setHideMenuUser(true)
-  // })
+  useClickOutside(menuRef, () => {
+    if (hideMenuUser) return null
+    setHideMenuUser(true)
+  })
 
   // useClickOutside(mainRef, () => {
   //   if (hideMenu) return null
@@ -133,6 +139,23 @@ export default function TabMainMenu({
     }
   }
 
+  const RenderMenuUser = () => {
+    if (user?.isLoggedIn) {
+      return (
+        <Menu onAction={(e) => onMenuChange(e)}>
+          <Item key="profile">Profile</Item>
+          <Item key="logout">Logout</Item>
+        </Menu>
+      )
+    } else {
+      return (
+        <Menu onAction={(e) => onMenuChange(e)}>
+          <Item key="login">Login</Item>
+        </Menu>
+      )
+    }
+  }
+
   return (
     <View width="100%">
       <Flex
@@ -147,9 +170,12 @@ export default function TabMainMenu({
                   <Link href="/">
                     <a>
                       <Image
-                        objectFit="cover"
-                        src="https://ik.imagekit.io/at4uyufqd9s/tr:w-40/spbu/logo.svg"
+                        loader={myLoader}
+                        objectFit="contain"
+                        src="/spbu/logo.svg"
                         alt={companyName}
+                        width={40}
+                        height={40}
                       />
                     </a>
                   </Link>
@@ -170,58 +196,40 @@ export default function TabMainMenu({
                 </View>
               </Flex>
             </View>
-            <View>
-              {user?.isLoggedIn ? (
-                <MenuTrigger aria-label="menu-1">
-                  <ActionButton isQuiet aria-label="button-1">
-                    <View borderRadius="large" flex width="24px">
-                      <Image
-                        objectFit="cover"
-                        src={`https://ik.imagekit.io/at4uyufqd9s/tr:w-24${user?.photo}`}
-                        alt="User Image"
-                      />
-                      <View width={10} justifySelf="center" marginX={6}>
-                        <svg
-                          version="1.1"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 129 129"
-                          enableBackground="new 0 0 129 129"
-                        >
-                          <g>
-                            <path d="m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z" />
-                          </g>
-                        </svg>
-                      </View>
-                    </View>
-                    <span style={{ marginLeft: '6px' }}>{'Hi, ' + user?.login}</span>
-                  </ActionButton>
-                  <Menu onAction={(e) => onMenuChange(e)}>
-                    <Item key="profile">Profile</Item>
-                    <Item key="logout">Logout</Item>
-                  </Menu>
-                </MenuTrigger>
-              ) : (
-                <MenuTrigger aria-label="menu-2">
-                  <ActionButton isQuiet aria-label="button-2">
-                    <View borderRadius="large" flex width="24px">
-                      <Image
-                        objectFit="cover"
-                        src={'https://ik.imagekit.io/at4uyufqd9s/tr:w-24/spbu/logo.svg'}
-                        alt="User Image"
-                      />
-                    </View>
-                    <span style={{ marginLeft: '6px' }}>User</span>
-                  </ActionButton>
-
-                  <Menu onAction={(e) => onMenuChange(e)}>
-                    <Item key="login">Login</Item>
-                  </Menu>
-                </MenuTrigger>
-              )}
+            <View aria-label="default-menu">
+              <MenuTrigger aria-label="menu-1">
+                <ActionButton flex isQuiet aria-label="button-1" width="size-1700">
+                  <Image
+                    loader={myLoader}
+                    objectFit="cover"
+                    src={user?.photo || '/spbu/logo.svg'}
+                    alt="User Image"
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                  <View width={10} justifySelf="center" marginX={6}>
+                    <svg
+                      version="1.1"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 129 129"
+                      enableBackground="new 0 0 129 129"
+                    >
+                      <g>
+                        <path d="m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z" />
+                      </g>
+                    </svg>
+                  </View>
+                  <span style={{ marginLeft: '6px' }}>
+                    {user?.isLoggedIn ? 'Hi, ' + user?.login : 'User'}
+                  </span>
+                </ActionButton>
+                <RenderMenuUser />
+              </MenuTrigger>
             </View>
 
             <View isHidden={{ base: false, M: true }} marginStart="size-150">
-              <button onClick={() => showMenu()}>
+              <div onClick={() => showMenuUser(!hideMenuUser)}>
                 <svg
                   className="fill-current h-3 w-3"
                   viewBox="0 0 20 20"
@@ -230,18 +238,23 @@ export default function TabMainMenu({
                   <title>Menu</title>
                   <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
                 </svg>
-              </button>
+              </div>
             </View>
           </Flex>
         </View>
-        <View
-          width="100vh"
-          zIndex={1}
-          backgroundColor="static-gray-50"
-          isHidden={{ base: hideMenu, M: false }}
-          marginX={{ base: 'size-50', M: 'size-200' }}
-          position={isMobile ? 'absolute' : 'relative'}
-          top={isMobile ? 64 : 0}
+        <div
+          ref={menuRef}
+          style={{
+            display: isMobile ? (hideMenuUser ? 'none' : 'block') : 'flex',
+            zIndex: 1,
+            width: isMobile?"100%":'calc(100% - 64px)',
+            backgroundColor: isMobile ? 'white' : "transparent",
+            marginLeft: isMobile ? "0" : "32px",
+            marginRight: isMobile ? "0" : "32px",
+            borderBottom: isMobile ? '1px solid #999' : "none",
+            position: isMobile ? 'absolute' : 'relative',
+            top: isMobile ? 64 : 0,
+          }}
         >
           <Tabs
             flex
@@ -255,7 +268,7 @@ export default function TabMainMenu({
             }}
             selectedKey={tab}
           >
-            <TabList>
+            <TabList flex alignSelf="center">
               {(item: iTab) => (
                 <Item>
                   <Link href={item.link}>
@@ -265,10 +278,11 @@ export default function TabMainMenu({
               )}
             </TabList>
           </Tabs>
-        </View>
+        </div>
       </Flex>
-      <Divider size="S" />
+      <Divider size="S" marginTop="-1px" />
     </View>
-
   )
 }
+
+export default TabMainMenu
