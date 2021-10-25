@@ -3,6 +3,7 @@ import React, { Key, useState } from 'react'
 import {
   Button,
   Checkbox,
+  DialogContainer,
   Divider,
   Flex,
   ProgressCircle,
@@ -21,7 +22,7 @@ const Vac1Form = dynamic(() => import('./Vac1Form'))
 
 const Vac1List = ({ user }: { user?: iUserLogin }) => {
   const [data, setData] = React.useState<iVac1>(initData)
-  const [open, setOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
   const [txtSearch, setTxtSearch] = React.useState<string | null>(null)
   const [isDownloading, setIsDownloading] = useState(false)
   const [isSearching, setIsSearching] = useState<boolean>(false)
@@ -60,7 +61,7 @@ const Vac1List = ({ user }: { user?: iUserLogin }) => {
     const data: iVac1 | any = await res.json()
 
     if (res.status === 200) {
-      setOpen(false)
+      setIsOpen(false)
       if (id > 0) {
         listData.update(id, data)
       } else {
@@ -93,7 +94,7 @@ const Vac1List = ({ user }: { user?: iUserLogin }) => {
     const result: iVac1 | any = await response.json()
 
     if (response.status === 200) {
-      setOpen(false)
+      setIsOpen(false)
       listData.remove(data.id)
     } else {
       console.log('Data tidak bisa dihapus!')
@@ -128,6 +129,10 @@ const Vac1List = ({ user }: { user?: iUserLogin }) => {
 
   return (
     <>
+      <DialogContainer type={'modal'} onDismiss={() => setIsOpen(false)} isDismissable>
+        {isOpen && (<Vac1Form submitData={handleSubmit} data={data} />) }
+      </DialogContainer>
+
       <Flex flex alignItems="center" alignContent="center" direction="column">
         <SearchField
           aria-label="Search people name"
@@ -163,19 +168,7 @@ const Vac1List = ({ user }: { user?: iUserLogin }) => {
 
         <View marginTop="size-400">
           {listData.items.map((item, index) => (
-            <View key={item.id} aria-label={'vac-1-list'}>
-              {item.id === data.id && open ? (
-                <Vac1Form key={item.id} submitData={handleSubmit} setOpen={setOpen} data={item} />
-              ) : (
-                <PeopleList
-                  item={item}
-                  setOpen={setOpen}
-                  open={open}
-                  index={index}
-                  setData={setData}
-                />
-              )}
-            </View>
+            <PeopleList key={item.id} item={item} setOpen={setIsOpen} open={isOpen} index={index} setData={setData} />
           ))}
           <Divider size="S" />
           <View marginY="size-400" marginX="size-50">
@@ -356,7 +349,7 @@ function PeopleList({ item, setOpen, open, setData, index }: listParam): JSX.Ele
                   cursor: 'pointer',
                 }}
               >
-                {item.id === 0 ? 'New name' : item.name}
+                {item.id === 0 ? 'New name' : item.name || 'Unknown'}
               </span>
             </View>
           </Flex>
