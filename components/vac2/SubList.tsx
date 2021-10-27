@@ -4,6 +4,8 @@ import { useAsyncList } from '@react-stately/data'
 import { iCovid, iVaccin } from '@components/interfaces'
 import moment from 'moment'
 import { Divider, Flex, ProgressCircle, View } from '@adobe/react-spectrum'
+import { DialogContainer } from '@react-spectrum/dialog'
+
 import { initialVaccin } from './SubForm'
 
 //const colWidth = 1000
@@ -24,7 +26,7 @@ const SubForm = dynamic(() => import('./SubForm'))
 
 export default function SubList({ vac2Id }: { vac2Id: number }) {
   let [data, setData] = useState<iVaccin>(initialVaccin)
-  const [open, setOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
 
   let list = useAsyncList<iVaccin>({
     async load({ signal }) {
@@ -86,7 +88,7 @@ export default function SubList({ vac2Id }: { vac2Id: number }) {
       } else {
         list.update(id, { ...data, isChanged: false })
       }
-      setOpen(false)
+      setIsOpen(false)
     }
   }
 
@@ -112,7 +114,7 @@ export default function SubList({ vac2Id }: { vac2Id: number }) {
     const result: iCovid | any = await response.json()
 
     if (response.status === 200) {
-      setOpen(false)
+      setIsOpen(false)
       list.remove(data.id)
     } else {
       console.log('Data tidak bisa dihapus!')
@@ -134,44 +136,42 @@ export default function SubList({ vac2Id }: { vac2Id: number }) {
       borderColor="transparent"
       marginY="size-400"
     >
+      <DialogContainer type={'modal'} onDismiss={() => setIsOpen(false)} isDismissable>
+        {isOpen && <SubForm submitData={handleSubmit} item={data} />}
+      </DialogContainer>
+
       {list.items.map((item, index) => (
-        <View key={`${item.id}-${vac2Id}-${index}`} marginY="size-200">
-          {data.id === item.id && open ? (
-            <SubForm submitData={handleSubmit} setOpen={setOpen} item={item} />
-          ) : (
-            <View key={`$-${vac2Id}-${item.id}`}>
-              <View>
-                <span
-                  style={{ cursor: 'pointer', display: 'inline-block', fontWeight: 700 }}
-                  onClick={() => {
-                    //console.log(item)
-                    setData(item)
-                    setOpen(true)
-                  }}
-                >
-                  {item.isNew ? 'New Fucksin' : item.vacType}
-                </span>
-              </View>
-              {!item.isNew && (
-                <View>
-                  <Flex direction="row">
-                    <View width={{ base: '35%', M: '40%' }}>Batch</View>
-                    <View>{item.batch}</View>
-                  </Flex>
-                  <Flex direction="row">
-                    <View width={{ base: '35%', M: '40%' }}>On Date</View>
-                    <View flex>{moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')}</View>
-                  </Flex>
-                  <Flex direction="row">
-                    <View width={{ base: '35%', M: '40%' }}>Location</View>
-                    <View flex>{item.vacLocation}</View>
-                  </Flex>
-                  <Flex direction="row">
-                    <View width={{ base: '35%', M: '40%' }}>Description</View>
-                    <View flex>{item.description}</View>
-                  </Flex>
-                </View>
-              )}
+        <View key={`$-${vac2Id}-${item.id}`} marginTop={index === 0 ? "0" : "size-200"}>
+          <View>
+            <span
+              style={{ cursor: 'pointer', display: 'inline-block', fontWeight: 700 }}
+              onClick={() => {
+                //console.log(item)
+                setData(item)
+                setIsOpen(true)
+              }}
+            >
+              {item.isNew ? 'New Fucksin' : item.vacType}
+            </span>
+          </View>
+          {!item.isNew && (
+            <View>
+              <Flex direction="row">
+                <View width={{ base: '35%', M: '40%' }}>Batch</View>
+                <View>{item.batch}</View>
+              </Flex>
+              <Flex direction="row">
+                <View width={{ base: '35%', M: '40%' }}>On Date</View>
+                <View flex>{moment(item.createdAt).format('YYYY-MM-DD HH:mm:ss')}</View>
+              </Flex>
+              <Flex direction="row">
+                <View width={{ base: '35%', M: '40%' }}>Location</View>
+                <View flex>{item.vacLocation}</View>
+              </Flex>
+              <Flex direction="row">
+                <View width={{ base: '35%', M: '40%' }}>Description</View>
+                <View flex>{item.description}</View>
+              </Flex>
             </View>
           )}
         </View>

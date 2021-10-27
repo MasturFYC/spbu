@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   useEffect(() => {
-      const isMobile = window.matchMedia("(max-width: 512px)");
+      const isMobile = window.matchMedia("(max-width: 640px)");
       const updateStatus = () => {
           setIsMobile(isMobile.matches);
       };

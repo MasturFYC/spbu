@@ -10,6 +10,7 @@ import {
   ToggleButton,
   Divider,
 } from '@adobe/react-spectrum'
+import { DialogContainer } from '@react-spectrum/dialog'
 import { SearchField } from '@react-spectrum/searchfield'
 import DownloadIcon from '@spectrum-icons/workflow/Download'
 import Pin from '@spectrum-icons/workflow/PinOff'
@@ -18,6 +19,7 @@ import { initCovid } from './Vac2Form'
 import { FormatDate } from '@lib/format'
 import moment from 'moment'
 import SubList from './SubList'
+
 import { fontSize } from 'pdfkit'
 
 const colWidth = 1000
@@ -55,7 +57,7 @@ export default function Vac2List() {
   const [txtSearch, setTxtSearch] = React.useState<string | null>(null)
   const [isSearching, setIsSearching] = useState<boolean>(false)
   let [data, setData] = useState<iCovid>({} as iCovid)
-  const [open, setOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
   let listData = useAsyncList<iCovid>({
     async load({ signal }) {
       const fetchOptions = {
@@ -124,7 +126,7 @@ export default function Vac2List() {
     const data: iCovid | any = await res.json()
 
     if (res.status === 200) {
-      setOpen(false)
+      setIsOpen(false)
       if (id > 0) {
         listData.update(id, data)
       } else {
@@ -157,7 +159,7 @@ export default function Vac2List() {
     const result: iCovid | any = await response.json()
 
     if (response.status === 200) {
-      setOpen(false)
+      setIsOpen(false)
       listData.remove(data.id)
     } else {
       console.log('Data tidak bisa dihapus!')
@@ -192,6 +194,10 @@ export default function Vac2List() {
 
   return (
     <>
+      <DialogContainer type={'modal'} onDismiss={() => setIsOpen(false)} isDismissable>
+        {isOpen && <Vac2Form submitData={handleSubmit} data={data} />}
+      </DialogContainer>
+
       <Flex flex alignItems="center" alignContent="center" direction="column">
         <SearchField
           alignSelf="center"
@@ -229,19 +235,15 @@ export default function Vac2List() {
 
         <View marginTop="size-400">
           {listData.items.map((item, index) => (
-            <View key={item.id} aria-label="people-list">
-              {data.id === item.id && open ? (
-                <Vac2Form key={item.id} submitData={handleSubmit} setOpen={setOpen} data={item} />
-              ) : (
-                <ShowPeople
-                  editedPeople={item}
-                  setOpen={setOpen}
-                  index={index}
-                  setEditedPeople={setData}
-                />
-              )}
-            </View>
+            <ShowPeople
+              key={item.id}
+              editedPeople={item}
+              setOpen={setIsOpen}
+              index={index}
+              setEditedPeople={setData}
+            />
           ))}
+          <Divider size="S" />
           <View marginY="size-400">
             <Button variant="cta" onPress={() => downloadCard()}>
               <DownloadIcon size="S" />

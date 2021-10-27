@@ -3,7 +3,7 @@ import React, { FormEvent } from 'react'
 import moment from 'moment'
 
 import { Content } from '@react-spectrum/view'
-import { Heading } from '@react-spectrum/text'
+import { Heading, Text } from '@react-spectrum/text'
 import { Form } from '@react-spectrum/form'
 import { Divider } from '@react-spectrum/divider'
 import { Dialog, useDialogContainer } from '@react-spectrum/dialog'
@@ -14,7 +14,7 @@ import { ComboBox, Item } from '@react-spectrum/combobox'
 import { ButtonGroup } from '@react-spectrum/buttongroup'
 import { Button } from '@react-spectrum/button'
 import SaveIcon from '@spectrum-icons/workflow/SaveFloppy'
-import { iVac1 } from '../interfaces'
+import { iVac1, VacType } from '../interfaces'
 import { View } from '@adobe/react-spectrum'
 
 type vac1FormParam = {
@@ -36,11 +36,6 @@ export const initData: iVac1 = {
   firstQr: '',
   nextQr: '',
   isSelected: true,
-}
-
-type VacType = {
-  id: string
-  name: string
 }
 
 const initialVacType: VacType = {
@@ -214,14 +209,13 @@ const Vac1Form: NextPage<vac1FormParam> = ({ data: people, submitData }) => {
                   type="submit"
                   variant="cta"
                 >
-                  {/* <SaveIcon size="S" marginEnd="size-100" /> */}
-                  Save
+                  <SaveIcon />
+                  <Text>Save</Text>
                 </Button>
-                <Button variant="secondary" type="button" onPress={() => dialog.dismiss()}>
+                <Button isHidden={{base:true,M:false}} variant="secondary" type="button" onPress={() => dialog.dismiss()}>
                   Cancel
                 </Button>
               </View>
-              <View>
                 <Button
                   variant="negative"
                   onPress={() => {
@@ -233,7 +227,6 @@ const Vac1Form: NextPage<vac1FormParam> = ({ data: people, submitData }) => {
                 >
                   Delete
                 </Button>
-              </View>
             </Flex>
           </ButtonGroup>
         </Form>

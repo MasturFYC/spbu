@@ -301,3 +301,9 @@ export interface iLinkCoa {
   name?: string;
   description?: string;
 }
+
+
+export type VacType = {
+  id: string
+  name: string
+}
