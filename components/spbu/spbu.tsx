@@ -3,6 +3,8 @@ import { Image, Flex, View, DialogContainer } from '@adobe/react-spectrum'
 import { iSpbu } from '../interfaces'
 import { useSpbu } from '../../lib/use-spbu'
 import { SpbuForm } from './form'
+import WaitMe from '@components/ui/wait-me'
+import { SpanLink } from '../ui/SpanLinkProps'
 
 const defaultUrl = '/api/spbu'
 
@@ -21,16 +23,7 @@ const SpbuList = ({ role }: { role?: string }) => {
   const [spbu, setSpbu] = React.useState<iSpbu>(initSpbu)
   const [open, setOpen] = React.useState(false)
 
-  if (spbus.isLoading)
-    return (
-      <View
-        marginStart="size-1600"
-        alignSelf="center"
-        justifySelf="center"
-        marginTop="size-1600">
-        Please wait.. loading SPBU
-      </View>
-    )
+  if (spbus.isLoading) return <WaitMe />
 
   const updateData = async (method: string, id: number, p: iSpbu) => {
     const url = `${defaultUrl}/${id}`
@@ -80,41 +73,45 @@ const SpbuList = ({ role }: { role?: string }) => {
   }
 
   return (
-    <div className="w-full mt-8 flex flex-1 justify-center">
-      <DialogContainer
-        type={'modal'}
-        onDismiss={() => setOpen(false)}
-        isDismissable>
-        {open && (
-          <SpbuForm
-            spbu={spbu}
-            onDelete={deleteData}
-            updateList={handleSubmit}
-          />
-        )}
+    <>
+      <DialogContainer type={'modal'} onDismiss={() => setOpen(false)} isDismissable>
+        {open && <SpbuForm spbu={spbu} onDelete={deleteData} updateList={handleSubmit} />}
       </DialogContainer>
-      {spbus &&
-        spbus.items
-          .filter((o) =>
-            role === 'Admin' || role === 'Owner' ? o.id >= 0 : o.id > 0
-          )
-          .map((p, i) => (
-            <div key={p.id} className="justify-center p-2 md:w-1/2 lg:w-3/12">
-              <div className="p-4 bg-white border border-purple-400 rounded-md">
+      <Flex marginY="size-400" justifyContent="center" gap="size-100" wrap>
+        {spbus &&
+          spbus.items
+            .filter((o) => (role === 'Admin' || role === 'Owner' ? o.id >= 0 : o.id > 0))
+            .map((p, i) => (
+              <View
+                key={p.id}
+                width={{ base: '100%', M: 'size-3400' }}
+                borderColor="purple-400"
+                borderRadius="medium"
+                borderWidth="thin"
+                padding="size-200"
+                marginX={{base:"size-100"}}
+              >
                 {role === 'Admin' || role === 'Owner' ? (
-                  <div className="text-6x1 font-bold hover:underline cursor-pointer"
-                    role="link"
+                  <SpanLink
                     onClick={() => {
                       setSpbu(p)
                       setOpen(true)
-                    }}>
+                    }}
+                  >
                     {p.id === 0 ? 'New SPBU' : `SPBU ${p.code}`}
-                  </div>
+                  </SpanLink>
                 ) : (
-                  <div className="text-6x1 font-bold">SPBU {p.code}</div>
+                  <SpanLink
+                    onClick={() => {
+                      setSpbu(p)
+                      setOpen(true)
+                    }}
+                  >
+                    SPBU {p.code}
+                  </SpanLink>
                 )}
-                {p.id && (
-                  <div className="w-full">
+                {p.id > 0 && (
+                  <div>
                     <div>
                       {p.name}
                       <br />
@@ -155,10 +152,10 @@ const SpbuList = ({ role }: { role?: string }) => {
                     </div>
                   </div>
                 )}
-              </div>
-            </div>
-          ))}
-    </div>
+              </View>
+            ))}
+      </Flex>
+    </>
   )
 }
 
